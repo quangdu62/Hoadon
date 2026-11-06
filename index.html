@@ -326,7 +326,7 @@
 
     <!-- CỘT NHẬP LIỆU BÊN TRÁI -->
     <div class="sidebar">
-        <div class="note-quangdu">Phí sử dụng của quý khách là 4 bộ trả góp HD SaiSon 1 tháng. Quang Dự – HD SAISON ❤️
+        <div class="note-quangdu">Mỗi lần dùng phần mềm, công việc lại nhàn hơn đôi chút. Mong rằng khi có khách cần trả góp, người đầu tiên em nghĩ đến sẽ là Quang Dự – HD SAISON ❤️
 
 📞 0988.057.750</div>
         
@@ -868,32 +868,39 @@
     </div>
 
     <script>
-        // KIỂM TRA ĐĂNG NHẬP (TÀI KHOẢN: haiyen - MẬT KHẨU: 123456 - HIỆU LỰC 24H)
+        // KIỂM TRA ĐĂNG NHẬP (GỘP TÊN ĐĂNG NHẬP VÀ MẬT KHẨU CÙNG 1 LẦN NHẬP - HIỆU LỰC 24H)
         function checkLoginSession() {
             const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 giờ tính bằng mili-giây
             let loginTime = localStorage.getItem("quangvinh_login_time");
             let currentTime = new Date().getTime();
 
-            // Nếu còn hạn trong 24h thì cho qua
+            // Nếu phiên đăng nhập vẫn còn trong vòng 24h thì cho qua
             if (loginTime && (currentTime - loginTime < SESSION_DURATION)) {
                 return;
             }
 
-            // Nếu hết hạn hoặc chưa đăng nhập thì bắt nhập
-            let user = prompt("Vui lòng nhập tên đăng nhập hệ thống:");
-            let pass = prompt("Nhập mật khẩu:");
+            // Gộp chung 1 khung nhắc để nhập dạng: "TênĐăngNhập / MậtKhẩu"
+            let inputVal = prompt("Vui lòng nhập Tên đăng nhập và Mật khẩu\n(Định dạng: tentaikhoan / matkhau):");
+            
+            if (inputVal !== null) {
+                let parts = inputVal.split('/');
+                let user = parts[0] ? parts[0].trim() : "";
+                let pass = parts[1] ? parts[1].trim() : "";
 
-            if (user === "haiyen" && pass === "123456") {
-                localStorage.setItem("quangvinh_login_time", new Date().getTime());
-                alert("Đăng nhập thành công! Phiên làm việc kéo dài 24 giờ.");
-            } else {
-                alert("Sai tên đăng nhập hoặc mật khẩu! Truy cập bị từ chối.");
-                document.body.innerHTML = "<h2 style='text-align:center; margin-top:100px; color:red;'>BẠN KHÔNG CÓ QUYỀN TRUY CẬP HỆ THỐNG NÀY</h2>";
-                throw new Error("Unauthorized");
+                if (user === "haiyen" && pass === "123456") {
+                    localStorage.setItem("quangvinh_login_time", new Date().getTime());
+                    alert("Đăng nhập thành công! Phiên làm việc kéo dài 24 giờ.");
+                    return;
+                }
             }
+
+            // Nếu nhập sai hoặc bấm Cancel
+            alert("Sai thông tin hoặc chưa nhập! Truy cập bị từ chối.");
+            document.body.innerHTML = "<h2 style='text-align:center; margin-top:100px; color:red;'>BẠN KHÔNG CÓ QUYỀN TRUY CẬP HỆ THỐNG NÀY</h2>";
+            throw new Error("Unauthorized");
         }
 
-        // Chạy kiểm tra ngay khi mở trang
+        // Chạy kiểm tra đăng nhập ngay khi mở trang
         checkLoginSession();
 
         function switchTab(tabIndex, btnElement) {
