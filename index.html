@@ -16,6 +16,77 @@
             overflow: hidden; 
             font-family: Arial, Helvetica, sans-serif; 
         }
+
+        /* GIAO DIỆN KHUNG ĐĂNG NHẬP CHUYÊN NGHIỆP */
+        #login-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .login-box {
+            background: #ffffff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            width: 380px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .login-box h3 {
+            text-align: center;
+            color: #1e3a8a;
+            font-size: 18px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .login-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .login-group label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #475569;
+        }
+        .login-group input {
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+        .login-group input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+        .btn-login {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .btn-login:hover {
+            background: #1d4ed8;
+        }
+        #login-error {
+            color: #dc2626;
+            font-size: 12px;
+            text-align: center;
+            min-height: 16px;
+        }
         
         /* CỘT NHẬP LIỆU BÊN TRÁI */
         .sidebar {
@@ -314,7 +385,7 @@
 
         @media print {
             body { background: white; height: auto; overflow: visible; display: block; }
-            .sidebar, .tab-bar { display: none !important; }
+            .sidebar, .tab-bar, #login-overlay { display: none !important; }
             .main-area, .preview-container { padding: 0; display: block; overflow: visible; background: white; }
             .paper.active { box-shadow: none; width: 210mm; height: 297mm; padding: 12mm 15mm 12mm 18mm; display: block !important; page-break-after: always; break-after: page; }
             #tab-5 .contract-page { padding: 20mm 20mm 20mm 25mm; height: 297mm; }
@@ -323,6 +394,23 @@
     </style>
 </head>
 <body>
+
+    <!-- MÀN HÌNH ĐĂNG NHẬP CHUYÊN NGHIỆP -->
+    <div id="login-overlay">
+        <div class="login-box">
+            <h3>Đăng nhập hệ thống</h3>
+            <div class="login-group">
+                <label>Tên đăng nhập</label>
+                <input type="text" id="login-user" placeholder="Nhập tên đăng nhập...">
+            </div>
+            <div class="login-group">
+                <label>Mật khẩu</label>
+                <input type="password" id="login-pass" placeholder="Nhập mật khẩu...">
+            </div>
+            <div id="login-error"></div>
+            <button class="btn-login" onclick="handleLogin()">Đăng nhập</button>
+        </div>
+    </div>
 
     <!-- CỘT NHẬP LIỆU BÊN TRÁI -->
     <div class="sidebar">
@@ -868,40 +956,45 @@
     </div>
 
     <script>
-        // KIỂM TRA ĐĂNG NHẬP (GỘP TÊN ĐĂNG NHẬP VÀ MẬT KHẨU CÙNG 1 LẦN NHẬP - HIỆU LỰC 24H)
+        // HỆ THỐNG KIỂM TRA ĐĂNG NHẬP CHUYÊN NGHIỆP
         function checkLoginSession() {
-            const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 giờ tính bằng mili-giây
+            const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 giờ
             let loginTime = localStorage.getItem("quangvinh_login_time");
             let currentTime = new Date().getTime();
 
-            // Nếu phiên đăng nhập vẫn còn trong vòng 24h thì cho qua
+            // Nếu phiên làm việc còn hiệu lực trong 24h thì ẩn khung đăng nhập
             if (loginTime && (currentTime - loginTime < SESSION_DURATION)) {
+                document.getElementById('login-overlay').style.display = 'none';
                 return;
             }
-
-            // Gộp chung 1 khung nhắc để nhập dạng: "TênĐăngNhập / MậtKhẩu"
-            let inputVal = prompt("Vui lòng nhập Tên đăng nhập và Mật khẩu\n(Định dạng: tentaikhoan / matkhau):");
-            
-            if (inputVal !== null) {
-                let parts = inputVal.split('/');
-                let user = parts[0] ? parts[0].trim() : "";
-                let pass = parts[1] ? parts[1].trim() : "";
-
-                if (user === "haiyen" && pass === "123456") {
-                    localStorage.setItem("quangvinh_login_time", new Date().getTime());
-                    alert("Đăng nhập thành công! Phiên làm việc kéo dài 24 giờ.");
-                    return;
-                }
-            }
-
-            // Nếu nhập sai hoặc bấm Cancel
-            alert("Sai thông tin hoặc chưa nhập! Truy cập bị từ chối.");
-            document.body.innerHTML = "<h2 style='text-align:center; margin-top:100px; color:red;'>BẠN KHÔNG CÓ QUYỀN TRUY CẬP HỆ THỐNG NÀY</h2>";
-            throw new Error("Unauthorized");
         }
 
-        // Chạy kiểm tra đăng nhập ngay khi mở trang
-        checkLoginSession();
+        function handleLogin() {
+            let user = document.getElementById('login-user').value.trim();
+            let pass = document.getElementById('login-pass').value.trim();
+            let errDiv = document.getElementById('login-error');
+
+            if (user === "haiyen" && pass === "123456") {
+                localStorage.setItem("quangvinh_login_time", new Date().getTime());
+                document.getElementById('login-overlay').style.display = 'none';
+            } else {
+                errDiv.innerText = "Sai tên đăng nhập hoặc mật khẩu!";
+            }
+        }
+
+        // Cho phép ấn Enter để đăng nhập nhanh
+        window.addEventListener('DOMContentLoaded', () => {
+            checkLoginSession();
+            
+            const passInput = document.getElementById('login-pass');
+            if(passInput) {
+                passInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        handleLogin();
+                    }
+                });
+            }
+        });
 
         function switchTab(tabIndex, btnElement) {
             document.querySelectorAll('.paper').forEach(el => el.classList.remove('active'));
