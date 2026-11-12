@@ -469,6 +469,20 @@
             .main-area, .preview-container { padding: 0; display: block; overflow: visible; background: white; }
             .paper.active { box-shadow: none; width: 210mm; height: 297mm; padding: 10mm 15mm; display: block !important; page-break-after: always; break-after: page; }
             #tab-2 .contract-page, #tab-5 .contract-page { padding: 20mm 20mm 20mm 25mm; height: 297mm; }
+
+            /* Chế độ in 2 bộ: in trọn bộ thứ nhất rồi mới đến bộ thứ hai */
+            body.print-two-copies > *:not(#print-area) { display: none !important; }
+            body.print-two-copies #print-area { display: block !important; }
+            #print-area .paper {
+                display: block !important;
+                box-shadow: none !important;
+                page-break-inside: auto !important;
+                break-inside: auto !important;
+            }
+            #print-area > .paper { page-break-after: always !important; break-after: page !important; }
+            #print-area > .paper:last-child { page-break-after: auto !important; break-after: auto !important; }
+            #print-area .contract-page:last-child { page-break-after: auto !important; break-after: auto !important; }
+
             @page { size: A4 portrait; margin: 0; }
         }
     </style>
@@ -732,16 +746,17 @@
     <div class="main-area">
         <div class="tab-bar">
             <div class="tab-buttons">
-                <button class="tab-btn active" onclick="switchTab(1, this)">1. HĐ Khách Đăng Ký Xe</button>
-                <button class="tab-btn" onclick="switchTab(2, this)">2. Thỏa Thuận Mất Xe</button>
-                <button class="tab-btn" onclick="switchTab(3, this)">3. Biên Bản Bàn Giao Xe</button>
-                <button class="tab-btn" onclick="switchTab(4, this)">4. Biên Nhận CH5</button>
-                <button class="tab-btn" onclick="switchTab(5, this)">5. Thỏa Thuận Mất Xe CH5</button>
-                <button class="tab-btn" onclick="switchTab(6, this)">6. Biên Bản Bàn Giao Xe CH5</button>
-                <button class="tab-btn" onclick="switchTab(7, this)">7. In Mã Vận Đơn (1/2 A4)</button>
-                <button class="tab-btn" onclick="switchTab(8, this)">8. QR HD Saison</button>
+                <button class="tab-btn active" onclick="switchTab(1, this)">1. Biên Nhận (VF8)</button>
+                <button class="tab-btn" onclick="switchTab(2, this)">2. Thỏa Thuận Mất Xe (VF8)</button>
+                <button class="tab-btn" onclick="switchTab(3, this)">3. Biên Bản Bàn Giao Xe (VF8)</button>
+                <button class="tab-btn" onclick="switchTab(4, this)">4. Biên Nhận (CH5)</button>
+                <button class="tab-btn" onclick="switchTab(5, this)">5. Thỏa Thuận Mất Xe (CH5)</button>
+                <button class="tab-btn" onclick="switchTab(6, this)">6. Biên Bản Bàn Giao Xe (CH5)</button>
+                <button class="tab-btn" onclick="switchTab(7, this)">7. In Mã Vận Đơn </button>
+                <button class="tab-btn" onclick="switchTab(8, this)">8. QR thanh toán HD SAISON</button>
             </div>
-            <button class="btn-print-top" onclick="window.print()">🖨️ IN MẪU ĐANG CHỌN</button>
+            <button class="btn-print-top" onclick="printTwoCopies()">🖨️ IN 2 BẢN (XẾP THEO BỘ)</button>
+            <button class="btn-print-top" onclick="window.print()" style="background:#2563eb;">IN 1 BẢN</button>
         </div>
 
         <div class="preview-container">
@@ -986,7 +1001,7 @@
                         <p><b>BÊN BÁN: CÔNG TY TNHH KINH DOANH DỊCH VỤ QUANG VINH</b></p>
                         <p>Địa chỉ: Số 127 đường 14/10, Tiền Hải Hưng Yên</p>
                         <p>Mã số doanh nghiệp: 1001012641 SĐT: 0929.116.288 </p>
-                        <p>Đại diện: Bùi Thị Hải Yến - Chức vụ: Cửa hàng trưởng</p>
+                        <p>Đại diện: Bùi Thị Hải Yến - Chức vụ: Kế Toán Tổng Hợp</p>
                     </div>
                     <div style="width: 48%; border-left: 1px solid #000; padding-left: 10px;">
                         <p><b>KHÁCH HÀNG: <span class="out_hoten bold" style="color: red;"></span></b></p>
@@ -1769,8 +1784,19 @@
         function updateKeyBadgeDisplay(totalDays, latestDate) {
             let badge = document.getElementById('key-expiry-display');
             if (!badge) return;
+
+            // Xử lý làm đẹp lại chuỗi ngày tháng từ server trả về
+            let formattedDate = latestDate;
+            let dObj = new Date(latestDate);
+            if (!isNaN(dObj.getTime())) {
+                let dDay = ("0" + dObj.getDate()).slice(-2);
+                let dMonth = ("0" + (dObj.getMonth() + 1)).slice(-2);
+                let dYear = dObj.getFullYear();
+                formattedDate = `${dDay}/${dMonth}/${dYear}`;
+            }
+
             if (totalDays > 0) {
-                badge.innerHTML = `<span style="color: #16a34a;">Còn ${totalDays} ngày (Đến ${latestDate})</span>`;
+                badge.innerHTML = `<span style="color: #16a34a;">Còn ${totalDays} ngày (Đến ${formattedDate})</span>`;
             } else {
                 badge.innerHTML = `<span style="color: #dc2626;">Đã hết hạn</span>`;
             }
@@ -1992,6 +2018,55 @@
             var resultDiv = document.getElementById("qr-result");
             resultDiv.style.display = "block";
             resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // In 2 bộ theo thứ tự: toàn bộ trang của bản 1, sau đó toàn bộ trang của bản 2.
+        // Áp dụng cho tất cả 8 mẫu; không thay đổi dữ liệu hay nội dung mẫu gốc.
+        async function printTwoCopies() {
+            const activePaper = document.querySelector('.paper.active');
+
+            if (!activePaper) {
+                alert("Vui lòng chọn mẫu cần in!");
+                return;
+            }
+
+            // Đồng bộ dữ liệu đang hiển thị trước khi tạo bản in.
+            if (typeof syncAll === 'function') syncAll();
+            if (typeof syncPage7 === 'function' && activePaper.id === 'tab-7') syncPage7();
+
+            const printArea = document.createElement('div');
+            printArea.id = 'print-area';
+
+            for (let copyIndex = 0; copyIndex < 2; copyIndex++) {
+                const copy = activePaper.cloneNode(true);
+                copy.classList.add('active');
+                printArea.appendChild(copy);
+            }
+
+            document.body.appendChild(printArea);
+            document.body.classList.add('print-two-copies');
+
+            // Chờ ảnh (ví dụ QR thanh toán) tải xong để cả hai bản đều in đủ.
+            const images = Array.from(printArea.querySelectorAll('img'));
+            await Promise.all(images.map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise(resolve => {
+                    img.addEventListener('load', resolve, { once: true });
+                    img.addEventListener('error', resolve, { once: true });
+                });
+            }));
+
+            const cleanup = () => {
+                document.body.classList.remove('print-two-copies');
+                printArea.remove();
+                window.removeEventListener('afterprint', cleanup);
+            };
+
+            window.addEventListener('afterprint', cleanup, { once: true });
+            window.print();
+
+            // Dự phòng cho trình duyệt không phát sự kiện afterprint.
+            setTimeout(cleanup, 60000);
         }
 
         window.addEventListener('DOMContentLoaded', () => {
