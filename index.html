@@ -322,20 +322,20 @@
 
         /* ĐỊNH DẠNG THỎA THUẬN 5 TRANG CHUẨN MẪU WORD */
         .contract-page {
-            position: relative;
-            width: 210mm;
-            min-height: 297mm;
-            padding: 20mm 20mm 20mm 25mm;
-            background: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            margin-bottom: 20mm;
-            page-break-after: always;
-            break-after: page;
-            font-family: 'Times New Roman', Times, serif;
-            color: #000;
-            font-size: 12pt;
-            line-height: 1;
-        }
+    position: relative;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 12mm 15mm 12mm 18mm; /* Đã thu nhỏ lề để tăng không gian chứa chữ */
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    margin-bottom: 10mm;
+    page-break-after: always;
+    break-after: page;
+    font-family: 'Times New Roman', Times, serif;
+    color: #000;
+    font-size: 11pt; /* Đã giảm cỡ chữ xuống 11pt cho vừa khít */
+    line-height: 1.15; /* Giãn dòng gọn gàng */
+}
         .page-number {
             position: absolute;
             bottom: 15mm;
