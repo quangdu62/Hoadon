@@ -1278,84 +1278,75 @@
             </div>
 
             <!-- KHUNG NHẬP LIỆU RIÊNG DÀNH CHO TRANG 8 (QR HD SAISON) -->
-            <div id="sidebar-form-page8" style="display: none; flex-direction: column; gap: 10px; margin-top: 5px;">
-                <h2 style="font-size: 16px; color: #1e3a8a; border-bottom: 2.5px solid #3b82f6; padding-bottom: 6px;">
-                    NHẬP THÔNG TIN TRANG 8 (QR HD SAISON)
-                </h2>
+            <!-- KHUNG NHẬP LIỆU RIÊNG DÀNH CHO TRANG 8 (QR HD SAISON) -->
+<div id="sidebar-form-page8" style="display: none; flex-direction: column; gap: 10px; margin-top: 5px;">
+    <h2 style="font-size: 16px; color: #1e3a8a; border-bottom: 2.5px solid #3b82f6; padding-bottom: 6px;">
+        NHẬP THÔNG TIN TRANG 8 (QR HD SAISON)
+    </h2>
 
-                <div class="section-tag">Thông tin thanh toán QR</div>
-                <div class="form-group">
-    <label>Ngày ký hợp đồng (DD/MM/YYYY):</label>
-    <input type="text" id="qr_contractDate" placeholder="VD: 22/11/2026" maxlength="10" inputmode="numeric" oninput="formatDateInput(this)">
-</div>
-<div class="form-group">
-    <label>Ngày thanh toán đầu tiên (DD/MM/YYYY):</label>
-    <input type="text" id="qr_firstPaymentDate" placeholder="VD: 31/12/2026" maxlength="10" inputmode="numeric" oninput="formatDateInput(this)">
-    <div style="font-size:11px; color:#666; font-style:italic;">Nhập ngày dự kiến thanh toán kỳ đầu (có thể bỏ trống)</div>
-</div>
-<div class="form-group">
-    <label>Ngày thanh toán cuối cùng (DD/MM/YYYY):</label>
-    <input type="text" id="qr_lastPaymentDate" placeholder="VD: 31/12/2027" maxlength="10" inputmode="numeric" oninput="formatDateInput(this)">
-    <div style="font-size:11px; color:#666; font-style:italic;">Nhập ngày kết thúc hợp đồng (có thể bỏ trống)</div>
-</div>
+    <div class="section-tag">Thông tin thanh toán QR</div>
+    <div class="form-group">
+        <label>Số tiền QR (VND):</label>
+        <input type="number" id="qr_amount" placeholder="Để trống nếu khách tự nhập">
+        <div style="font-size:11px; color:#666; font-style:italic;">Nhập số tiền hoặc để trống, khách tự nhập khi quét mã</div>
+    </div>
+    <div class="form-group">
+        <label>Số tiền trả hàng tháng (Gốc + Lãi chuẩn):</label>
+        <input type="number" id="qr_monthlyAmount" placeholder="VD: 1500000">
+        <div style="font-size:11px; color:#666; font-style:italic;">Số tiền thanh toán hàng tháng chưa phát sinh phí phạt</div>
+    </div>
 
-                <!-- TÍCH HỢP BỘ QUÉT QR SIÊU NHẠY CỦA CCCD VÀO SỐ HỢP ĐỒNG / SỐ THẺ TRANG 8 -->
-                <div class="form-group">
-                    <label>Số Hợp Đồng / Số Thẻ:</label>
-                    <div class="input-with-btns">
-                        <input type="text" id="qr_contract" placeholder="VD: DL038007989">
-                        <button type="button" class="btn-scan-field-wide" onclick="startPage8ContractScanner()">⚡ Quét QR</button>
-                    </div>
-                </div>
+    <div class="form-group">
+        <label>Số Hợp Đồng / Số Thẻ:</label>
+        <div class="input-with-btns">
+            <input type="text" id="qr_contract" placeholder="VD: DL038007989">
+            <button type="button" class="btn-scan-field-wide" onclick="startPage8ContractScanner()">⚡ Quét QR</button>
+        </div>
+    </div>
 
-                <div id="qr-p8-reader-container" style="display: none; margin-bottom: 8px; position: relative; background: #0f172a; padding: 12px; border-radius: 8px; border: 2px solid #7c3aed;">
-                    <div id="p8-scan-status" style="color: #c4b5fd; font-weight: bold; font-size: 13.5px; text-align: center; margin-bottom: 8px;">
-                        Đưa mã QR Hợp đồng / Thẻ / CCCD vào khung
-                    </div>
-                    
-                    <div style="position: relative; width: 100%; border-radius: 6px; overflow: hidden; background: #000;">
-                        <video id="qr-p8-video" autoplay playsinline muted style="width: 100%; display: block; object-fit: cover;"></video>
-                        <div style="position: absolute; top: 50%; left: 50%; width: 220px; height: 220px; transform: translate(-50%, -50%); border: 2px solid #38bdf8; border-radius: 8px; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55); pointer-events: none;">
-                            <div style="position: absolute; width: 100%; height: 2px; background: #38bdf8; top: 0; box-shadow: 0 0 8px #38bdf8; animation: scanLaser 1.5s infinite alternate;"></div>
-                        </div>
-                    </div>
-                    
-                    <div id="p8-zoom-control-box" style="display: none; align-items: center; justify-content: space-between; margin-top: 8px; color: #fff; font-size: 12px;">
-                        <span>Thu nhỏ</span>
-                        <input type="range" id="p8-zoom-slider" min="1" max="4" step="0.1" value="2.0" style="flex: 1; margin: 0 10px;" oninput="applyPage8Zoom(this.value)">
-                        <span>Phóng to</span>
-                    </div>
-
-                    <div style="margin-top: 10px; text-align: center; background: #1e293b; padding: 8px; border-radius: 6px; border: 1px dashed #38bdf8;">
-                        <label for="qr-p8-file-input" style="color: #38bdf8; font-size: 13px; font-weight: bold; cursor: pointer; display: block;">
-                            📁 Bấm chọn ảnh QR từ máy hoặc chụp trực tiếp
-                        </label>
-                        <input type="file" id="qr-p8-file-input" accept="image/*" style="display: none;" onchange="scanPage8QRFromFile(this)">
-                    </div>
-
-                    <button type="button" onclick="stopPage8ContractScanner()" style="width: 100%; margin-top: 8px; padding: 10px; background: #dc2626; color: white; border: none; font-size: 14px; font-weight: bold; border-radius: 4px; cursor: pointer;">Đóng Camera Quét</button>
-                </div>
-
-                <div class="form-group">
-                    <label>Tên Khách Hàng:</label>
-                    <input type="text" id="qr_name" placeholder="VD: NGUYEN VAN A" oninput="this.value = this.value.toUpperCase()">
-                </div>
-                <div class="form-group">
-                    <label>Ngày ký hợp đồng:</label>
-                    <input type="text" id="qr_contractDate">
-                </div>
-                <div class="form-group">
-                    <label>Ngày thanh toán đầu tiên:</label>
-                    <input type="text" id="qr_firstPaymentDate">
-                    <div style="font-size:11px; color:#666; font-style:italic;">Chọn ngày dự kiến thanh toán kỳ đầu (có thể bỏ trống)</div>
-                </div>
-                <div class="form-group">
-                    <label>Ngày thanh toán cuối cùng:</label>
-                    <input type="text" id="qr_lastPaymentDate">
-                    <div style="font-size:11px; color:#666; font-style:italic;">Chọn ngày kết thúc hợp đồng (có thể bỏ trống)</div>
-                </div>
-                <button type="button" onclick="generateQR()" style="width: 100%; padding: 12px; background-color: #d32f2f; color: white; border: none; margin-top: 15px; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer;">TẠO MÃ QR</button>
+    <div id="qr-p8-reader-container" style="display: none; margin-bottom: 8px; position: relative; background: #0f172a; padding: 12px; border-radius: 8px; border: 2px solid #7c3aed;">
+        <div id="p8-scan-status" style="color: #c4b5fd; font-weight: bold; font-size: 13.5px; text-align: center; margin-bottom: 8px;">
+            Đưa mã QR Hợp đồng / Thẻ / CCCD vào khung
+        </div>
+        <div style="position: relative; width: 100%; border-radius: 6px; overflow: hidden; background: #000;">
+            <video id="qr-p8-video" autoplay playsinline muted style="width: 100%; display: block; object-fit: cover;"></video>
+            <div style="position: absolute; top: 50%; left: 50%; width: 220px; height: 220px; transform: translate(-50%, -50%); border: 2px solid #38bdf8; border-radius: 8px; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55); pointer-events: none;">
+                <div style="position: absolute; width: 100%; height: 2px; background: #38bdf8; top: 0; box-shadow: 0 0 8px #38bdf8; animation: scanLaser 1.5s infinite alternate;"></div>
             </div>
+        </div>
+        <div id="p8-zoom-control-box" style="display: none; align-items: center; justify-content: space-between; margin-top: 8px; color: #fff; font-size: 12px;">
+            <span>Thu nhỏ</span>
+            <input type="range" id="p8-zoom-slider" min="1" max="4" step="0.1" value="2.0" style="flex: 1; margin: 0 10px;" oninput="applyPage8Zoom(this.value)">
+            <span>Phóng to</span>
+        </div>
+        <div style="margin-top: 10px; text-align: center; background: #1e293b; padding: 8px; border-radius: 6px; border: 1px dashed #38bdf8;">
+            <label for="qr-p8-file-input" style="color: #38bdf8; font-size: 13px; font-weight: bold; cursor: pointer; display: block;">
+                📁 Bấm chọn ảnh QR từ máy hoặc chụp trực tiếp
+            </label>
+            <input type="file" id="qr-p8-file-input" accept="image/*" style="display: none;" onchange="scanPage8QRFromFile(this)">
+        </div>
+        <button type="button" onclick="stopPage8ContractScanner()" style="width: 100%; margin-top: 8px; padding: 10px; background: #dc2626; color: white; border: none; font-size: 14px; font-weight: bold; border-radius: 4px; cursor: pointer;">Đóng Camera Quét</button>
+    </div>
+
+    <div class="form-group">
+        <label>Tên Khách Hàng:</label>
+        <input type="text" id="qr_name" placeholder="VD: NGUYEN VAN A" oninput="this.value = this.value.toUpperCase()">
+    </div>
+    <div class="form-group">
+        <label>Ngày ký hợp đồng (DD/MM/YYYY):</label>
+        <input type="text" id="qr_contractDate" placeholder="VD: 22/11/2026" maxlength="10" inputmode="numeric" oninput="formatDateInput(this)">
+    </div>
+    <div class="form-group">
+        <label>Ngày thanh toán đầu tiên (DD/MM/YYYY):</label>
+        <input type="text" id="qr_firstPaymentDate" placeholder="VD: 31/12/2026" maxlength="10" inputmode="numeric" oninput="formatDateInput(this)">
+        <div style="font-size:11px; color:#666; font-style:italic;">Nhập ngày dự kiến thanh toán kỳ đầu (có thể bỏ trống)</div>
+    </div>
+    <div class="form-group">
+        <label>Ngày thanh toán cuối cùng (DD/MM/YYYY):</label>
+        <input type="text" id="qr_lastPaymentDate" placeholder="VD: 31/12/2027" maxlength="10" inputmode="numeric" oninput="formatDateInput(this)">
+        <div style="font-size:11px; color:#666; font-style:italic;">Nhập ngày kết thúc hợp đồng (có thể bỏ trống)</div>
+    </div>
+    <button type="button" onclick="generateQR()" style="width: 100%; padding: 12px; background-color: #d32f2f; color: white; border: none; margin-top: 15px; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer;">TẠO MÃ QR</button>
         </div>
 
         <!-- CỘT BÊN PHẢI -->
